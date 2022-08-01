@@ -26,6 +26,7 @@ numbers = white_text_on_blue
 
 def main():
     print("SQL")
+    connection = create_connection("C:\Coding\Base_person_data\base_pd_sql\person.sqlite")
     pass
     
 
