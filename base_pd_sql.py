@@ -26,6 +26,7 @@ numbers = white_text_on_blue
 
 def main():
     print("SQL")
+    pass
     
 
 def create_connection(path):
@@ -35,8 +36,8 @@ def create_connection(path):
         print("Connection to SQLite DB successful")
     except Error as e:
         print(f"The error '{e}' occurred")
-
     return connection
+
 
 if __name__ == "__main__":
     main()
