@@ -42,23 +42,6 @@ def main():
         actual_date DATA
         );
         """
-    execute_query(connection, create_persons_table)
-    menu_choise = menu()
-    menu_handling(menu_choise)
-
-
-
-    #test_list_of_data()
-
-
-
-    #list_of_data = get_list_of_data()
-    #print(list_of_data)
-    #add_many_records = """INSERT INTO persons VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
-    #executemany_query(connection, add_many_records, list_of_data)
-
-    pass
-        
     base_structure = [
         'Фамилия Имя Отчество (с учетом РЕГИСТРА)', 
         'Дата рождения dd.mm.yyyy', 
@@ -71,6 +54,23 @@ def main():
         'e-mail (несколько через запятую)', 
         'Дата актуальности'
         ]
+    execute_query(connection, create_persons_table)
+    menu_choise = menu()
+    menu_handling(menu_choise, base_structure)
+
+
+
+    #test_list_of_data()
+
+
+
+    #list_of_data = get_list_of_data()
+    #print(list_of_data)
+    #add_many_records = """INSERT INTO persons VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+    #executemany_query(connection, add_many_records, list_of_data)
+
+        
+
 
 def menu():
     '''
@@ -89,7 +89,7 @@ def menu():
         menu_choise = input(red_text + "Неправильный выбор\n" + end_text + "Выберите " + numbers + "пункт" + end_text + " меню - " + blue_text).strip()
     return menu_choise
 
-def menu_handling(menu_choise):
+def menu_handling(menu_choise, base_structure):
     if menu_choise == '1':
         print("Under construction")
         pass
@@ -97,6 +97,7 @@ def menu_handling(menu_choise):
     elif menu_choise == '2':
         print("Under construction")
         pass
+        rec_new(base_structure)
         #rec_new(base_file, base_structure)
     elif menu_choise == '3':
         print("Under construction")
@@ -112,6 +113,14 @@ def menu_handling(menu_choise):
     else:
         print("Выберите значение из меню!")
         pass
+
+"""def rec_find(base_file):
+    '''Func that recieved basefile name and printed list of finded records'''
+    record = input("Введите ФИО для поиска: (с учетом РЕГИСТРА) ").strip()
+    base_list = base_file_read(base_file)
+    find_list = get_find_list(base_list, record)
+    print_find_list(find_list, record)
+    return find_list"""
 
 def test_list_of_data():
     list_of_data = get_list_of_data()
@@ -150,6 +159,47 @@ def execute_query(connection, query):
         # Add green text
     except Error as e:
         print(f"The error '{e}' occurred")
+
+
+def rec_new(base_structure):
+    data = []
+    for y in range(len(base_structure) - 1):
+        data_input = input("Введите данные: " + base_structure[y] + " - ").strip()
+        """if y == 0:
+            if check_name(data_input, base_file) is True:
+                print("Такая запись уже внесена.\nОСТАНОВКА программы\n")
+                break
+            else:
+                data.append(data_input)
+        else:"""
+        data.append(data_input)
+        print(data)
+    if len(data) > 1:
+        date = date_today()
+        data.append(date)
+    data = tuple(data)
+    print("Данные для внесения в таблицу", data)
+    #return data
+
+
+    def check_name(data_input, base_file):
+        record = False
+        data = base_file_read(base_file)
+        for rec in data:
+            if rec[0] == data_input:
+                record = True
+                return record
+            else:
+                continue
+        return record
+
+
+def date_today():
+    '''Func that returned today date'''
+    today = date.today()
+    return str(today)
+
+
 
 def get_list_of_data():
     list_of_data = []
