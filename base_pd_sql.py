@@ -42,16 +42,20 @@ def main():
         actual_date DATA
         );
         """
-
     execute_query(connection, create_persons_table)
+    menu_choise = menu()
+    menu_handling(menu_choise)
+
+
+
     #test_list_of_data()
 
 
 
-    list_of_data = get_list_of_data()
+    #list_of_data = get_list_of_data()
     #print(list_of_data)
-    add_many_records = """INSERT INTO persons VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
-    executemany_query(connection, add_many_records, list_of_data)
+    #add_many_records = """INSERT INTO persons VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+    #executemany_query(connection, add_many_records, list_of_data)
 
     pass
         
@@ -68,6 +72,46 @@ def main():
         'Дата актуальности'
         ]
 
+def menu():
+    '''
+    Menu function
+    '''
+    menu_choise = 'выбор не сделан'
+    print("\033[4m{}\033[0m".format("\nМЕНЮ"))
+    print(numbers + " " + "1" + " " + end_text + " - Найти запись")
+    print(numbers + " " + "2" + " " + end_text + " - Внести записи")
+    print(numbers + " " + "3" + " " + end_text + " - Изменить запись")
+    print(numbers + " " + "4" + " " + end_text + " - Напечатать все записи")
+    print(numbers + " " + "0" + " " + end_text + " - Выход \n")
+    menu_choise = input("Выберите " + numbers + "пункт" + end_text + " меню - " + blue_text).strip()
+    print(end_text, end='')
+    while menu_choise not in ['0', '1', '2', '3', '4']:
+        menu_choise = input(red_text + "Неправильный выбор\n" + end_text + "Выберите " + numbers + "пункт" + end_text + " меню - " + blue_text).strip()
+    return menu_choise
+
+def menu_handling(menu_choise):
+    if menu_choise == '1':
+        print("Under construction")
+        pass
+        # rec_find(base_file)
+    elif menu_choise == '2':
+        print("Under construction")
+        pass
+        #rec_new(base_file, base_structure)
+    elif menu_choise == '3':
+        print("Under construction")
+        pass
+        #change_data(base_file, base_structure)
+    elif menu_choise == '4':
+        print("Under construction")
+        pass
+        #print_all_data(base_file)
+    elif menu_choise == '0':
+        print(green_text + "ВЫХОД из программы" + end_text)
+        sys.exit()
+    else:
+        print("Выберите значение из меню!")
+        pass
 
 def test_list_of_data():
     list_of_data = get_list_of_data()
