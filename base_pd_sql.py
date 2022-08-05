@@ -26,12 +26,27 @@ numbers = white_text_on_blue
 
 def main():
     print("SQL")
-    connection = create_connection("persons.sqlite")
+    sql_path = "persons.sqlite"
+    connection = create_connection(sql_path)
+    table = [
+        'name',
+        'date_of_birth_human',
+        'date_of_birth',
+        'place_of_birth',
+        'passport',
+        'snils',
+        'inn',
+        'address',
+        'phone',
+        'email',
+        'actual_date'
+    ]
     create_persons_table = """
         CREATE TABLE IF NOT EXISTS persons (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        date_of_birth DATA,
+        date_of_birth_human TEXT (10),
+        date_of_birth TEXT (10),
         place_of_birth TEXT (50),
         passport TEXT (80),
         snils TEXT (11),
@@ -39,7 +54,7 @@ def main():
         address TEXT (80),
         phone TEXT (12),
         email TEXT (256),
-        actual_date DATA
+        actual_date TEXT (10)
         );
         """
     base_structure = [
@@ -54,9 +69,12 @@ def main():
         'e-mail (несколько через запятую)', 
         'Дата актуальности'
         ]
+    
+    cursor = connection.cursor()
     execute_query(connection, create_persons_table)
+    #connection.commit()
     menu_choise = menu()
-    menu_handling(menu_choise, base_structure)
+    menu_handling(menu_choise, base_structure, connection)
 
 
 
@@ -89,7 +107,7 @@ def menu():
         menu_choise = input(red_text + "Неправильный выбор\n" + end_text + "Выберите " + numbers + "пункт" + end_text + " меню - " + blue_text).strip()
     return menu_choise
 
-def menu_handling(menu_choise, base_structure):
+def menu_handling(menu_choise, base_structure, connection):
     if menu_choise == '1':
         print("Under construction")
         pass
@@ -97,7 +115,7 @@ def menu_handling(menu_choise, base_structure):
     elif menu_choise == '2':
         print("Under construction")
         pass
-        rec_new(base_structure)
+        rec_new(base_structure, connection)
         #rec_new(base_file, base_structure)
     elif menu_choise == '3':
         print("Under construction")
@@ -161,24 +179,47 @@ def execute_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-def rec_new(base_structure):
+def rec_new(base_structure, connection):
     data = []
     for y in range(len(base_structure) - 1):
         data_input = input("Введите данные: " + base_structure[y] + " - ").strip()
+        
         """if y == 0:
             if check_name(data_input, base_file) is True:
-                print("Такая запись уже внесена.\nОСТАНОВКА программы\n")
-                break
+                    print("Такая запись уже внесена.\nОСТАНОВКА программы\n")
+                    break
             else:
-                data.append(data_input)
+                    data.append(data_input)
         else:"""
         data.append(data_input)
-        print(data)
+        if y == 1:
+            date_iso = date_convert_to_ISO(data_input)
+            data.append(date_iso)
+        #print(data)
+
+
     if len(data) > 1:
         date = date_today()
         data.append(date)
     data = tuple(data)
     print("Данные для внесения в таблицу", data)
+    
+    table = [
+        'name',
+        'date_of_birth_human',
+        'date_of_birth',
+        'place_of_birth',
+        'passport',
+        'snils',
+        'inn',
+        'address',
+        'phone',
+        'email',
+        'actual_date'
+    ]
+    insert = 'INSERT INTO persons({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES{};'.format('name', 'date_of_birth_human', 'date_of_birth', 'place_of_birth', 'passport', 'snils', 'inn', 'address', 'phone', 'email', 'actual_date', data)
+    execute_query(connection, insert)
+    #connection.commit()
     #return data
 
 
@@ -199,6 +240,10 @@ def date_today():
     today = date.today()
     return str(today)
 
+
+def date_convert_to_ISO(date_human):
+    date_iso = date_human[6:] + '-' + date_human[3:5] + '-' + date_human[0:2]
+    return date_iso
 
 
 def get_list_of_data():
