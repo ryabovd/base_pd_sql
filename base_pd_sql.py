@@ -70,24 +70,11 @@ def main():
         'Дата актуальности'
         ]
     
-    cursor = connection.cursor()
+    #cursor = connection.cursor()
     execute_query(connection, create_persons_table)
-    #connection.commit()
     menu_choise = menu()
     menu_handling(menu_choise, base_structure, connection)
 
-
-
-    #test_list_of_data()
-
-
-
-    #list_of_data = get_list_of_data()
-    #print(list_of_data)
-    #add_many_records = """INSERT INTO persons VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
-    #executemany_query(connection, add_many_records, list_of_data)
-
-        
 
 
 def menu():
@@ -152,9 +139,7 @@ def test_list_of_data():
         rec = [i] + rec
         list_of_data.append(tuple(rec))
         i += 1
-        #print(( ';').join(rec) + '\n')
     return list_of_data
-    pass
 
 
 def create_connection(path):
@@ -183,45 +168,29 @@ def rec_new(base_structure, connection):
     data = []
     for y in range(len(base_structure) - 1):
         data_input = input("Введите данные: " + base_structure[y] + " - ").strip()
-        
-        """if y == 0:
-            if check_name(data_input, base_file) is True:
-                    print("Такая запись уже внесена.\nОСТАНОВКА программы\n")
-                    break
-            else:
-                    data.append(data_input)
-        else:"""
         data.append(data_input)
         if y == 1:
             date_iso = date_convert_to_ISO(data_input)
             data.append(date_iso)
-        #print(data)
-
-
     if len(data) > 1:
         date = date_today()
         data.append(date)
     data = tuple(data)
     print("Данные для внесения в таблицу", data)
-    
-    table = [
-        'name',
-        'date_of_birth_human',
-        'date_of_birth',
-        'place_of_birth',
-        'passport',
-        'snils',
-        'inn',
-        'address',
-        'phone',
-        'email',
-        'actual_date'
-    ]
-    insert = 'INSERT INTO persons({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES{};'.format('name', 'date_of_birth_human', 'date_of_birth', 'place_of_birth', 'passport', 'snils', 'inn', 'address', 'phone', 'email', 'actual_date', data)
+    insert = 'INSERT INTO persons({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES{};'.format('name', 
+                                                                                                'date_of_birth_human', 
+                                                                                                'date_of_birth', 
+                                                                                                'place_of_birth', 
+                                                                                                'passport', 
+                                                                                                'snils', 
+                                                                                                'inn', 
+                                                                                                'address', 
+                                                                                                'phone', 
+                                                                                                'email', 
+                                                                                                'actual_date', 
+                                                                                                data)
     execute_query(connection, insert)
-    #connection.commit()
-    #return data
-
+    
 
     def check_name(data_input, base_file):
         record = False
@@ -255,9 +224,8 @@ def get_list_of_data():
         rec = [i] + rec
         list_of_data.append(tuple(rec))
         i += 1
-        #print(( ';').join(rec) + '\n')
     return list_of_data
-    pass
+
 
 def base_file_read(base_file):
     '''Func that reads csv file (delimiter is ';') and returns a list of lists of strings'''
@@ -265,6 +233,7 @@ def base_file_read(base_file):
         lines = csv.reader(base, delimiter=';')
         base_list = list(lines)
     return base_list
+
 
 def executemany_query(connection, query, list_of_data):
     cursor = connection.cursor()
@@ -275,7 +244,6 @@ def executemany_query(connection, query, list_of_data):
         # Add green text
     except Error as e:
         print(f"The error '{e}' occurred")
-    pass
 
 
 if __name__ == "__main__":
