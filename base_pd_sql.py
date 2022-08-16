@@ -25,9 +25,6 @@ numbers = white_text_on_blue
 
 
 def main():
-    print("SQL")
-    sql_path = "persons.sqlite"
-    connection = create_connection(sql_path)
     table = [
         'name',
         'date_of_birth_human',
@@ -70,8 +67,11 @@ def main():
         'Дата актуальности'
         ]
     
-    #cursor = connection.cursor()
-    execute_query(connection, create_persons_table)
+    print("SQL")
+    sql_path = "persons.sqlite"
+    connection = create_connection(sql_path)
+    cursor = connection.cursor()
+    cursor.execute(create_persons_table)
     menu_choise = menu()
     menu_handling(menu_choise, base_structure, connection)
     print("Закрываем соединение с базой. Выход.")
@@ -164,10 +164,10 @@ def create_connection(path):
     return connection
 
 
-def execute_query(connection, query):
+def execute_query(connection, query, data):
     cursor = connection.cursor()
     try:
-        cursor.execute(query)
+        cursor.execute(query, data)
         connection.commit()
         print("Query executed successfully")
 # Add green text
@@ -188,19 +188,20 @@ def rec_new(base_structure, connection):
         data.append(date)
     data = tuple(data)
     print("Данные для внесения в таблицу", data)
-    insert = """INSERT INTO persons({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES{};""".format('name', 
-                                                                                                'date_of_birth_human', 
-                                                                                                'date_of_birth', 
-                                                                                                'place_of_birth', 
-                                                                                                'passport', 
-                                                                                                'snils', 
-                                                                                                'inn', 
-                                                                                                'address', 
-                                                                                                'phone', 
-                                                                                                'email', 
-                                                                                                'actual_date', 
-                                                                                                data)
-    execute_query(connection, insert)
+    insert = """INSERT INTO persons (
+        name, 
+        date_of_birth_human,
+        date_of_birth,
+        place_of_birth,
+        passport,
+        snils,
+        inn,
+        address,
+        phone,
+        email,
+        actual_date
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+    execute_query(connection, insert, data)
     
 
     def check_name(data_input, base_file):
