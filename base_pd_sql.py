@@ -97,11 +97,12 @@ def menu():
 
 def menu_handling(menu_choise, base_structure, connection):
     if menu_choise == '1':
-        print("Under construction")
+        print("Under construction. В работе")
+        rec_find(connection)
         pass
         # rec_find(base_file)
     elif menu_choise == '2':
-        print("Under construction")
+        print("Under construction. Почти закончено")
         pass
         rec_new(base_structure, connection)
         #rec_new(base_file, base_structure)
@@ -111,7 +112,7 @@ def menu_handling(menu_choise, base_structure, connection):
         #change_data(base_file, base_structure)
     elif menu_choise == '4':
         select_all(connection)
-        print("Under construction")
+        print("Under construction. Почти закончено")
         pass
         #print_all_data(base_file)
     elif menu_choise == '0':
@@ -121,13 +122,21 @@ def menu_handling(menu_choise, base_structure, connection):
         print("Выберите значение из меню!")
         pass
 
-"""def rec_find(base_file):
+def rec_find(connection):
     '''Func that recieved basefile name and printed list of finded records'''
     record = input("Введите ФИО для поиска: (с учетом РЕГИСТРА) ").strip()
-    base_list = base_file_read(base_file)
-    find_list = get_find_list(base_list, record)
-    print_find_list(find_list, record)
-    return find_list"""
+    query = """SELECT id, name, date_of_birth_human, place_of_birth, passport, snils, inn, address, phone, email, actual_date
+                FROM persons 
+                WHERE name LIKE '%{}%';""".format(record)
+    #print('Запрос на поиск \n', query)
+    finded_records = execute_find_query(connection, query)
+    for person in finded_records:
+        print(person)
+    
+    #base_list = base_file_read(base_file)
+    #find_list = get_find_list(base_list, record)
+    #print_find_list(find_list, record)
+    #return find_list
 
 def test_list_of_data():
     list_of_data = get_list_of_data()
@@ -149,7 +158,7 @@ def create_connection(path):
     try:
         connection = sqlite3.connect(path)
         print("Connection to SQLite DB successful")
-        # Add green text
+# Add green text
     except Error as e:
         print(f"The error '{e}' occurred")
     return connection
@@ -161,7 +170,7 @@ def execute_query(connection, query):
         cursor.execute(query)
         connection.commit()
         print("Query executed successfully")
-        # Add green text
+# Add green text
     except Error as e:
         print(f"The error '{e}' occurred")
 
@@ -179,7 +188,7 @@ def rec_new(base_structure, connection):
         data.append(date)
     data = tuple(data)
     print("Данные для внесения в таблицу", data)
-    insert = 'INSERT INTO persons({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES{};'.format('name', 
+    insert = """INSERT INTO persons({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES{};""".format('name', 
                                                                                                 'date_of_birth_human', 
                                                                                                 'date_of_birth', 
                                                                                                 'place_of_birth', 
@@ -268,6 +277,18 @@ def execute_read_query(connection, query):
         return result
     except Error as e:
         print(f"The error '{e}' occurred")
+
+def execute_find_query(connection, query):
+    cursor = connection.cursor()
+    result = None
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        #print('Результат поиска по базе\n' ,result)
+        return result
+    except Error as e:
+        print(f"The error '{e}' occurred")
+    pass
 
 
 if __name__ == "__main__":
