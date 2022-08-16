@@ -74,7 +74,8 @@ def main():
     execute_query(connection, create_persons_table)
     menu_choise = menu()
     menu_handling(menu_choise, base_structure, connection)
-
+    print("Закрываем соединение с базой. Выход.")
+    connection.close()
 
 
 def menu():
@@ -109,6 +110,7 @@ def menu_handling(menu_choise, base_structure, connection):
         pass
         #change_data(base_file, base_structure)
     elif menu_choise == '4':
+        select_all(connection)
         print("Under construction")
         pass
         #print_all_data(base_file)
@@ -242,6 +244,28 @@ def executemany_query(connection, query, list_of_data):
         connection.commit()
         print("Query executed successfully")
         # Add green text
+    except Error as e:
+        print(f"The error '{e}' occurred")
+
+
+def select_all(connection):
+    query = "SELECT * FROM persons"
+    all_records = execute_read_query(connection, query)
+
+#   select_users = "SELECT * from users"
+#   users = execute_read_query(connection, select_users)
+
+    for person in all_records:
+        print(person)
+
+
+def execute_read_query(connection, query):
+    cursor = connection.cursor()
+    result = None
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
     except Error as e:
         print(f"The error '{e}' occurred")
 
