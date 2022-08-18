@@ -46,15 +46,15 @@ def main():
 
     create_persons_table = """
         CREATE TABLE IF NOT EXISTS persons (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,  
-            name TEXT,
+            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,  
+            name TEXT (64) NOT NULL,
             date_of_birth_human TEXT (10),
             date_of_birth TEXT (10),
-            place_of_birth TEXT (50),
+            place_of_birth TEXT (64),
             passport TEXT (80),
             snils TEXT (11),
             inn TEXT (12),
-            address TEXT (80),
+            address TEXT (128),
             phone TEXT (12),
             email TEXT (256),
             actual_date TEXT (10)
