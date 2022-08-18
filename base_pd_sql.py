@@ -25,35 +25,45 @@ numbers = white_text_on_blue
 
 
 def main():
-    table = [
-        'name',
-        'date_of_birth_human',
-        'date_of_birth',
-        'place_of_birth',
-        'passport',
-        'snils',
-        'inn',
-        'address',
-        'phone',
-        'email',
-        'actual_date'
-    ]
+    table = ('id', 'name', 'date_of_birth_human', 'date_of_birth', 'place_of_birth', 'passport', 'snils', 'inn', 'address', 'phone', 'email', 'actual_date')
+
+    # create_persons_table = """
+    #     CREATE TABLE IF NOT EXISTS persons (
+    #     ? INTEGER PRIMARY KEY AUTOINCREMENT,
+    #     ? TEXT,
+    #     ? TEXT (10),
+    #     ? TEXT (10),
+    #     ? TEXT (50),
+    #     ? TEXT (80),
+    #     ? TEXT (11),
+    #     ? TEXT (12),
+    #     ? TEXT (80),
+    #     ? TEXT (12),
+    #     ? TEXT (256),
+    #     ? TEXT (10)
+    #     );
+    #     """
+
     create_persons_table = """
         CREATE TABLE IF NOT EXISTS persons (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        date_of_birth_human TEXT (10),
-        date_of_birth TEXT (10),
-        place_of_birth TEXT (50),
-        passport TEXT (80),
-        snils TEXT (11),
-        inn TEXT (12),
-        address TEXT (80),
-        phone TEXT (12),
-        email TEXT (256),
-        actual_date TEXT (10)
-        );
-        """
+            id INTEGER PRIMARY KEY AUTOINCREMENT,  
+            name TEXT,
+            date_of_birth_human TEXT (10),
+            date_of_birth TEXT (10),
+            place_of_birth TEXT (50),
+            passport TEXT (80),
+            snils TEXT (11),
+            inn TEXT (12),
+            address TEXT (80),
+            phone TEXT (12),
+            email TEXT (256),
+            actual_date TEXT (10)
+            );
+            """
+
+
+
+
     base_structure = [
         'Фамилия Имя Отчество (с учетом РЕГИСТРА)', 
         'Дата рождения dd.mm.yyyy', 
@@ -71,9 +81,10 @@ def main():
     sql_path = "persons.sqlite"
     connection = create_connection(sql_path)
     cursor = connection.cursor()
-    cursor.execute(create_persons_table)
+    #cursor.execute(create_persons_table)
+    execute_query(connection, create_persons_table)
     menu_choise = menu()
-    menu_handling(menu_choise, base_structure, connection)
+    menu_handling(menu_choise, base_structure, table, connection)
     print("Закрываем соединение с базой. Выход.")
     connection.close()
 
@@ -95,7 +106,7 @@ def menu():
         menu_choise = input(red_text + "Неправильный выбор\n" + end_text + "Выберите " + numbers + "пункт" + end_text + " меню - " + blue_text).strip()
     return menu_choise
 
-def menu_handling(menu_choise, base_structure, connection):
+def menu_handling(menu_choise, base_structure, table, connection):
     if menu_choise == '1':
         print("Under construction. В работе")
         rec_find(connection)
@@ -108,6 +119,8 @@ def menu_handling(menu_choise, base_structure, connection):
         #rec_new(base_file, base_structure)
     elif menu_choise == '3':
         print("Under construction")
+        print("Функция изменения записи")
+        update_data(base_structure, table, connection)
         pass
         #change_data(base_file, base_structure)
     elif menu_choise == '4':
@@ -130,8 +143,15 @@ def rec_find(connection):
                 WHERE name LIKE '%{}%';""".format(record)
     #print('Запрос на поиск \n', query)
     finded_records = execute_find_query(connection, query)
-    for person in finded_records:
-        print(person)
+    #print('rec_find', finded_records)
+    print_find_list(finded_records, record)
+    return finded_records
+    """if len(finded_records) > 0:
+        for person in finded_records:
+            print(person)
+        return finded_records
+    else:
+        print("Записи не найдены")"""
     
     #base_list = base_file_read(base_file)
     #find_list = get_find_list(base_list, record)
@@ -164,7 +184,7 @@ def create_connection(path):
     return connection
 
 
-def execute_query(connection, query, data):
+def execute_query(connection, query, data=()):
     cursor = connection.cursor()
     try:
         cursor.execute(query, data)
@@ -199,8 +219,8 @@ def rec_new(base_structure, connection):
         address,
         phone,
         email,
-        actual_date
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+        actual_date ) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
     execute_query(connection, insert, data)
     
 
@@ -279,6 +299,7 @@ def execute_read_query(connection, query):
     except Error as e:
         print(f"The error '{e}' occurred")
 
+
 def execute_find_query(connection, query):
     cursor = connection.cursor()
     result = None
@@ -290,6 +311,89 @@ def execute_find_query(connection, query):
     except Error as e:
         print(f"The error '{e}' occurred")
     pass
+
+
+def update_data(base_structure, table, connection):
+    '''Func finds records for update.
+    '''
+    find_list = rec_find(connection)
+    print("update_data", )
+    #print(find_list)
+
+    rec_for_change = input('Введите ' + numbers + ' № ' + end_text + ' записи для изменения - ' + blue_text).strip()
+    print(end_text, end='')
+    print()
+    print('find_list', find_list)
+    for rec in find_list:
+        if rec_for_change == str(rec[0]):
+            print(end_text, end='')
+            print(red_text + 'Изменить запись???' + end_text, yellow_text + str(rec) + end_text)
+            choise = input('Напишите ' + red_text + 'ДА' + end_text + ' или ' + green_text + 'НЕТ' + end_text + ' - ' + yellow_text).strip()
+            print(end_text, end='')
+            print()
+            if choise.lower() == 'да':
+                #base_list = base_file_read(base_file)
+                change_record(rec, base_structure, table, connection)
+            else:
+                print('Не меняем записи')
+        else:
+            continue
+
+
+def change_record(record_for_change, base_structure, table, connection):
+    '''Func '''
+    print('record_for_change', record_for_change)
+    new_record = list(record_for_change)
+    print('new_record', new_record)
+    for y in range(1, len(base_structure)):
+        print("ПРОВЕРЬТЕ данные: " + base_structure[y-1])
+        print(yellow_text + new_record[y] + end_text)
+        print()
+        choise = input("Изменить данные? Введите " + red_text + "ДА" + end_text + " или " + green_text + "НЕТ" + end_text + " - " + yellow_text).strip()
+        print(end_text, end='')
+        print()
+        if choise.lower() == 'да':
+            new_data = (input('Введите данные: '+ base_structure[y-1] + ' - ').strip(),)
+            query = """UPDATE persons SET {} = ? WHERE id = {};""".format(table[y+1], record_for_change[0])
+            execute_query(connection, query, new_data)
+        else:
+            continue
+
+
+def preper_base_list(base_list, record_for_write):
+    '''Insert a new record in place of the old one'''
+    index, line = record_for_write
+    base_list[index] = line
+    return base_list
+
+
+def write_change_base_file(base_file, base_list):
+    '''Func recieved name base file and new base list. 
+    Then write base file from list.'''
+    with open(file=base_file, mode="w", encoding="UTF-8", newline='') as base:
+        writer = csv.writer(base, delimiter=';')
+        for line in base_list:
+            writer.writerow(line)
+    print(red_text + "Файл базы данных ЗАПИСАН" + end_text + "\n")
+
+
+def print_find_list(find_list, record):
+    '''Func recieved list of finded records and record that need to find.
+    Printed heads.
+    For rec in base printed index of finded record and finded record.
+    if record not in base, print notice.
+    '''
+    if len(find_list) > 0:
+        print()
+        print(numbers + ' № ' + end_text + '     Запись' + '\n')
+        for rec in range(len(find_list)):
+            print(numbers + ' ' + str(find_list[rec][0]) + ' ' + end_text, ' ', end='')
+            pprint.pprint(find_list[rec][1:], indent=4, width=100)
+            print()
+    else:
+        print('\nЗапись', marked_text + record + end_text, red_text + 'НЕ НАЙДЕНА' + end_text)
+        print(green_text + 'Работа программы ЗАВЕРШЕНА' + end_text)
+        sys.exit()
 
 
 if __name__ == "__main__":
