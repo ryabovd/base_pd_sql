@@ -25,24 +25,8 @@ numbers = white_text_on_blue
 
 
 def main():
-    table = ('id', 'name', 'date_of_birth_human', 'date_of_birth', 'place_of_birth', 'passport', 'snils', 'inn', 'address', 'phone', 'email', 'actual_date')
 
-    # create_persons_table = """
-    #     CREATE TABLE IF NOT EXISTS persons (
-    #     ? INTEGER PRIMARY KEY AUTOINCREMENT,
-    #     ? TEXT,
-    #     ? TEXT (10),
-    #     ? TEXT (10),
-    #     ? TEXT (50),
-    #     ? TEXT (80),
-    #     ? TEXT (11),
-    #     ? TEXT (12),
-    #     ? TEXT (80),
-    #     ? TEXT (12),
-    #     ? TEXT (256),
-    #     ? TEXT (10)
-    #     );
-    #     """
+    table = ('id', 'name', 'date_of_birth_human', 'date_of_birth', 'place_of_birth', 'passport', 'snils', 'inn', 'address', 'phone', 'email', 'actual_date')
 
     create_persons_table = """
         CREATE TABLE IF NOT EXISTS persons (
@@ -51,18 +35,15 @@ def main():
             date_of_birth_human TEXT (10),
             date_of_birth TEXT (10),
             place_of_birth TEXT (64),
-            passport TEXT (80),
+            passport TEXT (256),
             snils TEXT (11),
             inn TEXT (12),
-            address TEXT (128),
-            phone TEXT (12),
+            address TEXT (256),
+            phone TEXT (256),
             email TEXT (256),
             actual_date TEXT (10)
             );
             """
-
-
-
 
     base_structure = [
         'Фамилия Имя Отчество (с учетом РЕГИСТРА)', 
@@ -106,6 +87,7 @@ def menu():
         menu_choise = input(red_text + "Неправильный выбор\n" + end_text + "Выберите " + numbers + "пункт" + end_text + " меню - " + blue_text).strip()
     return menu_choise
 
+
 def menu_handling(menu_choise, base_structure, table, connection):
     if menu_choise == '1':
         print("Under construction. В работе")
@@ -135,6 +117,7 @@ def menu_handling(menu_choise, base_structure, table, connection):
         print("Выберите значение из меню!")
         pass
 
+
 def rec_find(connection):
     '''Func that recieved basefile name and printed list of finded records'''
     record = input("Введите ФИО для поиска: (с учетом РЕГИСТРА) ").strip()
@@ -157,6 +140,7 @@ def rec_find(connection):
     #find_list = get_find_list(base_list, record)
     #print_find_list(find_list, record)
     #return find_list
+
 
 def test_list_of_data():
     list_of_data = get_list_of_data()
@@ -281,10 +265,6 @@ def executemany_query(connection, query, list_of_data):
 def select_all(connection):
     query = "SELECT * FROM persons"
     all_records = execute_read_query(connection, query)
-
-#   select_users = "SELECT * from users"
-#   users = execute_read_query(connection, select_users)
-
     for person in all_records:
         print(person)
 
@@ -306,7 +286,6 @@ def execute_find_query(connection, query):
     try:
         cursor.execute(query)
         result = cursor.fetchall()
-        #print('Результат поиска по базе\n' ,result)
         return result
     except Error as e:
         print(f"The error '{e}' occurred")
@@ -318,7 +297,7 @@ def update_data(base_structure, table, connection):
     '''
     find_list = rec_find(connection)
     print("update_data", )
-    #print(find_list)
+
 
     rec_for_change = input('Введите ' + numbers + ' № ' + end_text + ' записи для изменения - ' + blue_text).strip()
     print(end_text, end='')
@@ -332,7 +311,6 @@ def update_data(base_structure, table, connection):
             print(end_text, end='')
             print()
             if choise.lower() == 'да':
-                #base_list = base_file_read(base_file)
                 change_record(rec, base_structure, table, connection)
             else:
                 print('Не меняем записи')
@@ -358,13 +336,6 @@ def change_record(record_for_change, base_structure, table, connection):
             execute_query(connection, query, new_data)
         else:
             continue
-
-
-def preper_base_list(base_list, record_for_write):
-    '''Insert a new record in place of the old one'''
-    index, line = record_for_write
-    base_list[index] = line
-    return base_list
 
 
 def write_change_base_file(base_file, base_list):
