@@ -1,3 +1,4 @@
+from concurrent.futures.process import _ExecutorManagerThread
 import sqlite3
 from sqlite3 import Error
 import csv
@@ -142,7 +143,7 @@ def rec_find(connection):
     #return find_list
 
 
-def test_list_of_data():
+"""def test_list_of_data():
     list_of_data = get_list_of_data()
     for rec in list_of_data:
         if len(rec) < 11:
@@ -154,7 +155,7 @@ def test_list_of_data():
         rec = [i] + rec
         list_of_data.append(tuple(rec))
         i += 1
-    return list_of_data
+    return list_of_data"""
 
 
 def create_connection(path):
@@ -182,8 +183,15 @@ def execute_query(connection, query, data=()):
 def rec_new(base_structure, connection):
     data = []
     for y in range(len(base_structure) - 1):
-        data_input = input("Введите данные: " + base_structure[y] + " - ").strip()
+        data_input = input("Введите данные: " + yellow_text + base_structure[y] + end_text + " - ").strip()
         data.append(data_input)
+        if y == 0:
+            if check_name(data_input, connection):
+                print(green_text + 'Имя уникально' + end_text)
+            else:
+                print(red_text + 'Такое имя уже есть в базе' + end_text)
+                print(green_text + "ВЫХОД из программы" + end_text)
+                sys.exit()
         if y == 1:
             date_iso = date_convert_to_ISO(data_input)
             data.append(date_iso)
@@ -191,7 +199,7 @@ def rec_new(base_structure, connection):
         date = date_today()
         data.append(date)
     data = tuple(data)
-    print("Данные для внесения в таблицу", data)
+    print("Данные для внесения в таблицу", yellow_text + '\n'.join(data) + end_text)
     insert = """INSERT INTO persons (
         name, 
         date_of_birth_human,
@@ -208,16 +216,18 @@ def rec_new(base_structure, connection):
     execute_query(connection, insert, data)
     
 
-    def check_name(data_input, base_file):
-        record = False
-        data = base_file_read(base_file)
-        for rec in data:
-            if rec[0] == data_input:
-                record = True
-                return record
-            else:
-                continue
-        return record
+def check_name(data_input, connection):
+    query = """SELECT id, name, date_of_birth_human, place_of_birth, passport, snils, inn, address, phone, email, actual_date
+                FROM persons 
+                WHERE name LIKE '%{}%';""".format(data_input)
+    find_result = execute_find_query(connection, query)
+    #print(find_result)
+    #print(type(find_result))
+    if len(find_result) == 0:
+        return True
+    else:
+        return False
+    pass
 
 
 def date_today():
@@ -231,7 +241,7 @@ def date_convert_to_ISO(date_human):
     return date_iso
 
 
-def get_list_of_data():
+"""def get_list_of_data():
     list_of_data = []
     base_file = "base_pd.csv"
     base = base_file_read(base_file)
@@ -240,15 +250,15 @@ def get_list_of_data():
         rec = [i] + rec
         list_of_data.append(tuple(rec))
         i += 1
-    return list_of_data
+    return list_of_data"""
 
 
-def base_file_read(base_file):
+"""def base_file_read(base_file):
     '''Func that reads csv file (delimiter is ';') and returns a list of lists of strings'''
     with open(file=base_file, mode='r', encoding='utf-8') as base:
         lines = csv.reader(base, delimiter=';')
         base_list = list(lines)
-    return base_list
+    return base_list"""
 
 
 def executemany_query(connection, query, list_of_data):
@@ -332,7 +342,7 @@ def change_record(record_for_change, base_structure, table, connection):
         print()
         if choise.lower() == 'да':
             new_data = (input('Введите данные: '+ base_structure[y-1] + ' - ').strip(),)
-            query = """UPDATE persons SET {} = ? WHERE id = {};""".format(table[y+1], record_for_change[0])
+            query = """UPDATE persons SET {} = ? WHERE id = {};""".format(table[y], record_for_change[0])
             execute_query(connection, query, new_data)
         else:
             continue
