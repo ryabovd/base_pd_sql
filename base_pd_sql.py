@@ -130,32 +130,6 @@ def rec_find(connection):
     #print('rec_find', finded_records)
     print_find_list(finded_records, record)
     return finded_records
-    """if len(finded_records) > 0:
-        for person in finded_records:
-            print(person)
-        return finded_records
-    else:
-        print("Записи не найдены")"""
-    
-    #base_list = base_file_read(base_file)
-    #find_list = get_find_list(base_list, record)
-    #print_find_list(find_list, record)
-    #return find_list
-
-
-"""def test_list_of_data():
-    list_of_data = get_list_of_data()
-    for rec in list_of_data:
-        if len(rec) < 11:
-            print(rec)
-    base_file = "base_pd.csv"
-    base = base_file_read(base_file)
-    i = 1
-    for rec in base:
-        rec = [i] + rec
-        list_of_data.append(tuple(rec))
-        i += 1
-    return list_of_data"""
 
 
 def create_connection(path):
@@ -217,7 +191,16 @@ def rec_new(base_structure, connection):
     
 
 def check_name(data_input, connection):
-    query = """SELECT id, name, date_of_birth_human, place_of_birth, passport, snils, inn, address, phone, email, actual_date
+    query = """SELECT id, 
+                    name, 
+                    date_of_birth_human, 
+                    place_of_birth, passport, 
+                    snils, 
+                    inn, 
+                    address, 
+                    phone, 
+                    email, 
+                    actual_date
                 FROM persons 
                 WHERE name LIKE '%{}%';""".format(data_input)
     find_result = execute_find_query(connection, query)
@@ -239,26 +222,6 @@ def date_today():
 def date_convert_to_ISO(date_human):
     date_iso = date_human[6:] + '-' + date_human[3:5] + '-' + date_human[0:2]
     return date_iso
-
-
-"""def get_list_of_data():
-    list_of_data = []
-    base_file = "base_pd.csv"
-    base = base_file_read(base_file)
-    i = 1
-    for rec in base:
-        rec = [i] + rec
-        list_of_data.append(tuple(rec))
-        i += 1
-    return list_of_data"""
-
-
-"""def base_file_read(base_file):
-    '''Func that reads csv file (delimiter is ';') and returns a list of lists of strings'''
-    with open(file=base_file, mode='r', encoding='utf-8') as base:
-        lines = csv.reader(base, delimiter=';')
-        base_list = list(lines)
-    return base_list"""
 
 
 def executemany_query(connection, query, list_of_data):
