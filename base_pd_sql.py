@@ -310,16 +310,6 @@ def change_record(record_for_change, base_structure, table, connection):
         else:
             continue
 
-# remove this func
-def write_change_base_file(base_file, base_list):
-    '''Func recieved name base file and new base list. 
-    Then write base file from list.'''
-    with open(file=base_file, mode="w", encoding="UTF-8", newline='') as base:
-        writer = csv.writer(base, delimiter=';')
-        for line in base_list:
-            writer.writerow(line)
-    print(red_text + "Файл базы данных ЗАПИСАН" + end_text + "\n")
-
 
 def print_find_list(find_list, record):
     '''Func recieved list of finded records and record that need to find.
