@@ -270,8 +270,6 @@ def update_data(base_structure, table, connection):
     '''
     find_list = rec_find(connection)
     print("update_data", )
-
-
     rec_for_change = input('Введите ' + numbers + ' № ' + end_text + ' записи для изменения - ' + blue_text).strip()
     print(end_text, end='')
     print()
@@ -304,9 +302,21 @@ def change_record(record_for_change, base_structure, table, connection):
         print(end_text, end='')
         print()
         if choise.lower() == 'да':
-            new_data = (input('Введите данные: '+ base_structure[y-1] + ' - ').strip(),)
-            query = """UPDATE persons SET {} = ? WHERE id = {};""".format(table[y], record_for_change[0])
-            execute_query(connection, query, new_data)
+            if y == 1: 
+                new_data = (input('Введите данные: '+ base_structure[y-1] + ' - ').strip(),)
+                query = """UPDATE persons SET {} = ? WHERE id = {};""".format(table[y], record_for_change[0])
+                execute_query(connection, query, new_data)
+            elif y == 2:
+                new_data = (input('Введите данные: '+ base_structure[y-1] + ' - ').strip(),)
+                query = """UPDATE persons SET {} = ? WHERE id = {};""".format(table[y], record_for_change[0])
+                execute_query(connection, query, new_data)
+                new_machine_date = (date_convert_to_ISO(new_data[0]),)
+                query = """UPDATE persons SET {} = ? WHERE id = {};""".format(table[y+1], record_for_change[0])  
+                execute_query(connection, query, new_machine_date)
+            else:
+                new_data = (input('Введите данные: '+ base_structure[y-1] + ' - ').strip(),)
+                query = """UPDATE persons SET {} = ? WHERE id = {};""".format(table[y+1], record_for_change[0])
+                execute_query(connection, query, new_data)                
         else:
             continue
 
