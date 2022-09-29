@@ -310,7 +310,7 @@ def change_record(record_for_change, base_structure, table, connection):
         else:
             continue
 
-
+# remove this func
 def write_change_base_file(base_file, base_list):
     '''Func recieved name base file and new base list. 
     Then write base file from list.'''
